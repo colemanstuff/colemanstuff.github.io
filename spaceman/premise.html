@@ -40,6 +40,8 @@ h1 { font-size: 1.4em;
     padding: 50px 20px 20px 20px;
     text-indent: 0;
     line-height: 1.4; }
+h3 { color: #D3D3D3; }
+td p { text-indent: 0px; }
 #basement { height: 50px; background: #1E1E1E; display: block; margin-top: 150px; }
 #basement p { color: #D3D3D3; padding-top: 15px; font-size: 15px; }
 @media (min-width:1100px) { .text-content { width: 62%; } }
@@ -1148,7 +1150,7 @@ h1 { font-size: 1.4em;
 <table>
 <tbody>
 <tr>
-<td width="75">
+<td width="100">
 <p>Vase/Jar</p>
 </td>
 <td>
@@ -1156,7 +1158,7 @@ h1 { font-size: 1.4em;
 </td>
 </tr>
 <tr>
-<td width="75">
+<td width="100">
 <p>Prayer Beads</p>
 </td>
 <td>
@@ -1164,7 +1166,7 @@ h1 { font-size: 1.4em;
 </td>
 </tr>
 <tr>
-<td width="75">
+<td width="100">
 <p>Lotus</p>
 </td>
 <td>
@@ -1172,7 +1174,7 @@ h1 { font-size: 1.4em;
 </td>
 </tr>
 <tr>
-<td width="75">
+<td width="100">
 <p>Mirror</p>
 </td>
 <td>
@@ -1180,7 +1182,7 @@ h1 { font-size: 1.4em;
 </td>
 </tr>
 <tr>
-<td width="75">
+<td width="100">
 <p>Scepter</p>
 </td>
 <td>
@@ -1188,7 +1190,7 @@ h1 { font-size: 1.4em;
 </td>
 </tr>
 <tr>
-<td width="75">
+<td width="100">
 <p>Jewel</p>
 </td>
 <td>
@@ -1196,7 +1198,7 @@ h1 { font-size: 1.4em;
 </td>
 </tr>
 <tr>
-<td width="75">
+<td width="100">
 <p>Dharma Wheel</p>
 </td>
 <td>
@@ -1204,7 +1206,7 @@ h1 { font-size: 1.4em;
 </td>
 </tr>
 <tr>
-<td width="75">
+<td width="100">
 <p>Goshiki-un</p>
 </td>
 <td>
@@ -1212,7 +1214,7 @@ h1 { font-size: 1.4em;
 </td>
 </tr>
 <tr>
-<td width="75">
+<td width="100">
 <p>Praying Hands</p>
 </td>
 <td>
@@ -1220,7 +1222,7 @@ h1 { font-size: 1.4em;
 </td>
 </tr>
 <tr>
-<td width="75">
+<td width="100">
 <p>Hoken</p>
 </td>
 <td>
@@ -1228,7 +1230,7 @@ h1 { font-size: 1.4em;
 </td>
 </tr>
 <tr>
-<td width="75">
+<td width="100">
 <p>Gokorei</p>
 </td>
 <td>
@@ -1236,7 +1238,7 @@ h1 { font-size: 1.4em;
 </td>
 </tr>
 <tr>
-<td width="75">
+<td width="100">
 <p>Nichirin</p>
 </td>
 <td>
@@ -1244,7 +1246,7 @@ h1 { font-size: 1.4em;
 </td>
 </tr>
 <tr>
-<td width="75">
+<td width="100">
 <p>Gachirin</p>
 </td>
 <td>
@@ -1252,7 +1254,7 @@ h1 { font-size: 1.4em;
 </td>
 </tr>
 <tr>
-<td width="75">
+<td width="100">
 <p>Hoin</p>
 </td>
 <td>
@@ -1260,7 +1262,7 @@ h1 { font-size: 1.4em;
 </td>
 </tr>
 <tr>
-<td width="75">
+<td width="100">
 <p>Vajra</p>
 </td>
 <td>
@@ -1288,7 +1290,7 @@ ModeNow = 0
 document.getElementById("themes").addEventListener('click', function() {
     if (ModeNow % 2 == 1) { document.head.getElementsByTagName('style')[1].remove() }
     if (ModeNow % 2 == 0) {
-        addCSS3('body { background: #f5f1e5; font-weight: 400; } body p, body h1 { color: #212529; } header, #basement { background: #e0e0e0; } header p, #basement p { color: black; } svg { color: black; } a { color: black; } .nowon { color: black; } #homebtn:hover, .title:hover, .nowon:hover, #themes:hover, #prev:hover, #next:hover { background: #C0C0C0; }'); }
+        addCSS3('body { background: #f5f1e5; font-weight: 400; } body p, body h1 { color: #212529; } header, #basement { background: #e0e0e0; } header p, #basement p { color: black; } svg { color: black; } a { color: black; } .nowon { color: black; } #homebtn:hover, .title:hover, .nowon:hover, #themes:hover, #prev:hover, #next:hover { background: #C0C0C0; } h3 { color: #212529; }'); }
     ModeNow += 1
 });
 document.getElementById("themes").click()
