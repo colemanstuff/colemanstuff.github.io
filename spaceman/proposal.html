@@ -1,18 +1,12 @@
-<!--Space man Proposal - LibReader.html-->
 <!DOCTYPE html>
 <html>
 <head>
 <meta  charset="UTF-8" />
 <link rel="shortcut icon" href="/saturn.ico" type="image/ico">
 <title>Space man (Proposal) – LibReader</title>
-<!--<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">-->
-<style> /*Arial and Calibri are the best. Georgia is good on white bg.*/
-/*body, html { margin: 0; font-family: Arial; line-height: 1.4; font-size: 17px;
-    background: #0A0A0A;  font-weight: 300; }*/
+<style>
 body, html { margin: 0; font-family: "Times New Roman"; line-height: 1.2; font-size: 20px;
-    background: #0A0A0A;  font-weight: 300; }
+    background: #0A0A0A; }
 header {
     position: absolute;
     top: 0px;
@@ -23,7 +17,6 @@ header {
     box-shadow: rgba(0,0,0,.12) 0 1px 3px;
     transition: .3s ease-in-out;
     opacity: 1;
-    /*padding-top: 12px;*/
 }
 svg { height: 17px; color: #f2f2f3; }
 div { display: inline-block; }
@@ -35,9 +28,8 @@ div { display: inline-block; }
 #homebtn, .title, .nowon, #themes, #prev, #next { height: 36px; padding-top: 12px; line-height: 1; }
 #prev, #next { width: 50px; text-align: center; vertical-align: middle; }
 #homebtn:hover, .title:hover, .nowon:hover, #themes:hover, #prev:hover, #next:hover { background: #4D4D4D; }
-a { /*text-decoration: none;*/ color: white; }
-
-.text-content { color: #D3D3D3; width: 62%; }
+a { color: white; }
+.text-content { color: #D3D3D3; }
 #maindata { display: flex;
     align-items: center;
     align-content: center;
@@ -48,19 +40,14 @@ h1 { font-size: 1.4em;
     padding: 50px 20px 20px 20px;
     text-indent: 0;
     line-height: 1.4; }
-
 #basement { height: 50px; background: #1E1E1E; display: block; margin-top: 150px; }
 #basement p { color: #D3D3D3; padding-top: 15px; font-size: 15px; }
-@media (max-width:900px) { .pagination { display: none; } .text-content {
-    width: 82%; } }
+@media (min-width:1100px) { .text-content { width: 62%; } }
+@media (max-width:1100px) { .pagination { display: none; } .text-content { width: 82%; } }
+@media (max-width:460px) { .text-content { width: 92%; } .title { display: none; } }
 </style>
-<script>
-
-</script>
-<base target="_blank">
 </head>
 <body>
-
 <header id='headr'>
 <a href="https://colemanstuff.github.io" title='Home'><div id="homebtn"><svg class="arrow-left" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="arrow-left" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path class="" fill="currentColor" d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"></path></svg>
 <!--Home Icon <svg class="arrow-left" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="house" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path class="" fill="currentColor" d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H416 392c-22.1 0-40-17.9-40-40V448 384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v64 24c0 22.1-17.9 40-40 40H160 128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"></path></svg>--></div></a>
@@ -286,7 +273,7 @@ h1 { font-size: 1.4em;
 </div>
 
 <div id='basement'>
-	<center><p>@Hell-Space Creative Group</p></center>
+	<center><p>@Hell-Space Creative Group | <a href="https://x.com/ningenwardo">Twitter</a> | <img src="https://counter1.optistats.ovh/private/freecounterstat.php?c=eahqadglexr75phc6xmj8g1x6bk4784j" border="0" alt="free hit counter"></p></center>
 </div>
 
 <script type="text/javascript">
@@ -302,38 +289,15 @@ document.getElementById("themes").click()
 
 function googleTranslateElementInit() {
     new google.translate.TranslateElement({pageLanguage: 'ru', includedLanguages: 'en,de,ja,zh-CN,fr,hi,it,pt,es', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, multilanguagePage: true, autoDisplay: false}, 'google_translate_element');
-    //https://www.w3schools.com/tags/ref_language_codes.asp
 }
-function makeG() {
-  var div = document.createElement("div")
-  div.setAttribute('id', 'google_translate_element')
-  div.setAttribute("style", 'position: absolute; top: 6px; right: 100px; z-index: 100;');
-  document.body.insertAdjacentElement('afterbegin', div);
-
-  var div = document.createElement("script")
-  div.setAttribute('type', 'text/javascript')
-  div.setAttribute("src", 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit');
-  //chrome-extension://lgfkkmjogmojopoodccjlfcigdnpdlfe/google_translate_code.js also works.
-  document.body.insertAdjacentElement('beforeend', div);
-}
-/*Про уст.дэфолт.язык (если на стр.буд.запрещ.инлайн-код)
-https://stackoverflow.com/questions/1773687/google-translate-set-default-language
-https://gist.github.com/artturik/15bed885bcec6faa95eb73acb2e2ae54
-*/
-makeG()
-function makeOldG() {
-  var div = document.createElement("div")
-  div.setAttribute('id', 'google_translate_element')
-  div.setAttribute("style", 'position: absolute; top: 6px; right: 100px; z-index: 100;');
-  document.body.insertAdjacentElement('afterbegin', div);
-
-  var div = document.createElement("script")
-  div.setAttribute('type', 'text/javascript')
-  div.setAttribute("src", 'google_translate_code.js');
-  document.body.insertAdjacentElement('beforeend', div);
-}
-setTimeout(function() { if (!document.querySelector('.goog-te-gadget-icon')) { makeOldG()
-setTimeout(() => makeOldG(), 3000) } }, 3000);
+var div = document.createElement("div")
+div.setAttribute('id', 'google_translate_element')
+div.setAttribute("style", 'position: absolute; top: 6px; right: 100px; z-index: 100;');
+document.body.insertAdjacentElement('afterbegin', div);
+var div = document.createElement("script")
+div.setAttribute('type', 'text/javascript')
+div.setAttribute("src", 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit');
+document.body.insertAdjacentElement('beforeend', div);
 </script>
 </body>
 </html>
