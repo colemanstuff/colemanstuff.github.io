@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="saturn.ico" type="image/ico">
+    <title>Кейс 1: Автоматизация и Парсинг</title>
+    <!-- Подключаю Anime.js -->
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3/lib/anime.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-color: #c9d1d9;
+            --accent-color: #58a6ff;
+            --border-color: #30363d;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: var(--accent-color);
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+		#navigation {
+			display: flex;
+			justify-content: space-between;
+			align-items: center; 
+			width: 100%;
+		}
+		
+        header {
+            margin-bottom: 40px;
+        }
+
+        h1 { color: #fff; margin: 0 0 10px 0; }
+
+        .project-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            opacity: 0; /* Для анимации */
+        }
+
+        .project-section h2 { color: #fff; margin-top: 0; }
+        .tech-stack {
+            font-size: 13px;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .gallery-item {
+            background: #0d1117;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .img-placeholder {
+            font-size: 12px;
+            color: #8b949e;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* Базовый слой модального окна */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 17, 23, 0.95);
+            display: flex;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            box-sizing: border-box;
+            
+            /* По умолчанию центрирую обычные картинки */
+            align-items: center;
+            justify-content: center;
+            overflow-y: hidden; 
+            padding: 20px;
+        }
+
+        /* ЭТОТ КЛАСС БУДЕТ ВКЛЮЧАТЬСЯ ТОЛЬКО ДЛЯ ДЛИННЫХ КАРТИНОК */
+        .lightbox.scrollable-mode {
+            align-items: flex-start; /* Прижимаю к верху, чтобы скроллить вниз */
+            overflow-y: auto;        /* Включаю вертикальный скролл */
+            padding: 40px 0;
+        }
+
+        .lightbox.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Стили самой картинки внутри модалки */
+        .lightbox img {
+            border-radius: 6px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+            transform: scale(0.95);
+            transform-origin: center center;
+        }
+
+        /* Для обычных картинок: вписываю их в границы экрана */
+        .lightbox:not(.scrollable-mode) img {
+            max-width: 90%;
+            max-height: 85%;
+            object-fit: contain;
+        }
+
+        /* Для длинных картинок: делаю их крупными и приближенными */
+        .lightbox.scrollable-mode img {
+            width: 90%;
+            max-width: 1200px;
+            height: auto;
+            transform-origin: top center; /* Анимация увеличения идет сверху вниз */
+        }
+
+        /* Контейнер для длинного скриншота */
+        .gallery-item.long-container {
+            align-items: flex-start; /* Прижимаю картинку к верху */
+            overflow: hidden;
+        }
+
+        /* Сама картинка */
+        .gallery-item.long-container img {
+            width: 100%;
+            height: auto; /* Высота автоматическая, чтобы картинка не сжималась */
+            object-fit: cover;
+            object-position: top; /* Показываю только верх сайта */
+            transition: transform 10s ease-in-out; /* Плавный скролл вниз */
+        }
+
+        /* Эффект прокрутки при наведении */
+        .gallery-item.long-container:hover img {
+            /* Сдвигаю картинку вверх, чтобы увидеть ее конец. 
+               Значение подберается под высоту скриншота */
+            transform: translateY(-70%); 
+        }
+        /* Делаю контейнер относительным, чтобы позиционировать текст */
+        .gallery-item {
+            position: relative; 
+        }
+
+        /* Стили для плашки с текстом */
+        .gallery-item .item-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(22, 27, 34, 0.9); /* Темный фон в тон сайта */
+            border-top: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 12px;
+            font-size: 12px;
+            line-height: 1.4;
+            box-sizing: border-box;
+            z-index: 2; /* Текст всегда выше картинки */
+        }
+        /* Сетка для карточек */
+        /* Базовые стили для сетки галереи (для компьютеров и ноутбуков) */
+        .gallery {
+            display: grid;
+            /* Жестко задаем 3 колонки одинаковой ширины */
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        /* Адаптивность: если экран меньше 900px (планшеты), перестраиваем в 2 колонки */
+        @media (max-width: 900px) {
+            .gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Адаптивность: если экран меньше 600px (смартфоны), выстраиваю всё в 1 колонку */
+        @media (max-width: 600px) {
+            .gallery {
+                grid-template-columns: 1fr;
+                gap: 15px; /* Чуть уменьшаем расстояние на мобильных */
+            }
+        }
+
+        /* Общий контейнер: объединяет картинку и текст снизу */
+        .gallery-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.2s;
+        }
+
+        .gallery-card:hover {
+            border-color: var(--accent-color); /* Подсветка всей карточки при наведении */
+        }
+
+        /* Сбрасываю лишние рамки с плитки, так как рамка теперь общая */
+        .gallery-item {
+            border: none;
+            border-radius: 0;
+            width: 100%;
+        }
+
+        /* Стили текстового описания под скриншотом */
+        .gallery-desc {
+            padding: 15px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #8b949e;
+            border-top: 1px solid var(--border-color);
+            background: #1c2128; /* Чуть выделяю плашку с текстом */
+            flex-grow: 1; /* Растягиваю текстовые блоки по высоте, чтобы все карточки в ряду были одинаковыми */
+        }
+
+        .gallery-desc strong {
+            color: #fff;
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .gallery-desc p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="index.html" class="back-link">← Вернуться на главную</a>
+    
+    <header>
+        <h1>Кейс 1: Автоматизация процессов и Парсинг</h1>
+        <p>Разработка кроссплатформенных инструментов для сбора, фильтрации и менеджмента медиа-данных.</p>
+    </header>
+
+    <section class="project-section" data-project>
+        <h2>Десктопная экосистема работы с данными (Python)</h2>
+        <div class="tech-stack">Стек: Python, requests, PyInstaller, threading, FFmpeg</div>
+        <p>Разработал комплекс утилит для автоматизации рутинной работы с файлами и API медиа-ресурсов. Программы выполняют пакетную обработку данных, автоматическое переименование файлов по сложным паттернам в фоновом режиме и семантический разбор тегов.</p>
+        <p>В <strong>Python-приложении</strong> реализована API-интеграция с имиджбордом, автоматическое создание thematic HTML-страниц с превью, вывод статистики посещений и сохранений.</p>
+        <p>Разработал комплекс парсеров для автоматического сбора медиа-контента с крупных зарубежных имиджбордов и веб-платформ через REST API.</p>
+        <p>Реализовал алгоритм семантического анализа: по общим поисковым запросам скрипты автоматически сопоставляют, фильтруют и выгружают связанные метаданные (имена персонажей, категории, авторские права/копирайты) с сортировкой по популярности.</p>
+        <p>Скомпилировал десктопные решения в независимый автономный .exe формат.</p>
+        <small>У меня много разных скриптов и программ для различных мелких задач. Например, Python-скрипты для форматирования файлов (в частности, из созданного в расширении файла базы данных сделать html с отфильтрованными каналами и видео, или из базы с сохраненными персонажами сделать html с фильтрами по классам/категориям, постерами и т. п.), автоматическое переименование сохраняемых в данный момент в папку файлов по заданному паттерну (работает, пока не закроешь программу), парсинг страниц комиксов...</small>
+        
+        <div class="gallery">
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/app2.jpg">
+                    <img src="portfolio/app2.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерфейс Python-приложения:</strong> Создает HTML из базы данных постов по тегу.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/app3.jpg">
+                    <img src="portfolio/app3.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерфейс Python-приложения:</strong> Скачивание медиа из базы данных сохраненных постов.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/app4.jpg">
+                    <img src="portfolio/app4.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерфейс Python-приложения:</strong> Скачивание медиа из базы данных (для пользовательского списка).
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/app5.jpg">
+                    <img src="portfolio/app5.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерфейс Python-приложения:</strong> Изменение размеров выбранных файлов или всех файлов в папке.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/app6.jpg">
+                    <img src="portfolio/app6.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерфейс Python-приложения:</strong> Создание HTML с данными через API имиджборда используя введенные параметры. Создает html с тегами по общему запросу (например список персонажей для запроса village+sky). Есть уже спарсеная датабаза с тегами по категориям (например персонажи).
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/app1.jpg">
+                    <img src="portfolio/app1.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Пример созданной HTML-страницы:</strong> Функции добавлены благодаря расширению, через которое имиджборд и созданные страницы связаны данными. Через скачивание файла реализована связь с Python. На странице присутствуют: тег, превью, общее количество постов и количество постов по теме, Dark/Light mode, добавление комментария к тегу, возможность поставить или изменить оценку тега, добавление в «Смотреть позже». Функция Ranking: после просмотра тегов и оценок создается топ, а остальные теги удаляются. Также реализовано скачивание всех сохраненных тегов с разных thematic страниц для создания общего списка в Python-приложении. Обеспечен обмен данными между имиджбордом и тематическими страницами, чтобы все сохраненные теги синхронизировались и там, и там. После завершения работы страницу можно сохранить как html.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/app7.jpg">
+                    <img src="portfolio/app7.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерфейс Python-приложения:</strong> Получение списка тегов (например копирайта) для общего запроса (например village+sky). Всё сортируется по количеству постов.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/convert1.jpg">
+                    <img src="portfolio/convert1.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерфейс Python-приложения 2:</strong> Конвертация видео.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/disk1.jpg">
+                    <img src="portfolio/disk1.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерфейс Python-приложения 3:</strong> Создание датабазы файлов в папке для анализа дискового пространства.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/disk2.jpg">
+                    <img src="portfolio/disk2.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерфейс Python-приложения 3:</strong> Сравнение датабаз сканов для создания списка папок с новыми файлами. Есть версия использующая threading. Может сканировать весь диск.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/disk3.jpg">
+                    <img src="portfolio/disk3.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерфейс Python-приложения 4:</strong> Очистка выбранных папок на компьютаре через рекурсию.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/invest1.jpg">
+                    <img src="portfolio/invest1.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Python-приложения 5:</strong> Скрипт для анализа исторических данных торгов (Data Mining). Анализ и расчет вложений для % успеха в бинарном опционе.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/invest2.jpg">
+                    <img src="portfolio/invest2.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерфейс Python-приложения 5:</strong> Алгоритм для анализа исторических данных торгов (Data Mining). Скрипт выявляет поведенческие паттерны активов для торговых ботов.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/invest3.jpg">
+                    <img src="portfolio/invest3.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерфейс Python-приложения 5:</strong> В Excel расчеты для вложений. Финансовые расчеты и оценка рисков автоматизированы в Excel.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/mass1.jpg">
+                    <img src="portfolio/mass1.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерфейс Python-приложения 6:</strong> Расчет центра масс космических тел. Визуализация движения космических тел на плоскости, симуляции гравитационного взаимодействия и динамического вычисления центра масс системы.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/mass2.jpg">
+                    <img src="portfolio/mass2.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерфейс Python-приложения 6:</strong> Расчет центра масс космических тел. Визуализация 2.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/mass3.jpg">
+                    <img src="portfolio/mass3.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерфейс Python-приложения 6:</strong> Расчет центра масс космических тел. Визуализация 3.
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="project-section" data-project>
+        <h2>Кастомные браузерные расширения (JavaScript)</h2>
+        <div class="tech-stack">Стек: JavaScript, WebExtensions API, HTML5, CSS3, chrome.storage</div>
+        <p>Перенес ключевую логику десктопного софта в формат веб-расширений для интеграции функций напрямую в интерфейс браузера. Реализовал модули мгновенного сохранения контента (функции быстрого менеджмента) по горячим клавишам, визуальную CSS-индикацию статусов, локальное кэширование и ведение статистики.</p>
+        <p>Организовал локальное хранение данных через chrome.storage.local и localStorage, что позволило минимизировать нагрузку на сеть, вести внутреннюю статистику просмотров и кэшировать JSON-базы для мгновенного поиска.</p>
+        <p>Могу использовать все функции из документации, то есть создать любое расширение. Могу разработать расширение под любой современный браузер.</p>
+        <p>Страница для поиска только среди сохраненных постов через общий поиск с фильтром по сохраненным постам. Ведение статистики просмотра видео на YouTube и отображение её на странице в расширении. Скрытие рекламы. Исправление отображения элементов сайта. Быстрое сохранение/копирование нужного элемента при нажатии на него. Минималистичный переводчик выделенного текста. Интерактивный просмотр закладок с превью YouTube-видео...</p>
+
+        <div class="gallery">
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/ext1.jpg">
+                    <img src="portfolio/ext1.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Добавление функционала на сайт:</strong> Добавляет для картинок блок превью с функцианалом быстрого просмотра и сохранения.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/ext2.jpg">
+                    <img src="portfolio/ext2.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Имиджборд API:</strong> Просмотр контента сайта через API с функциями быстрого просмотра и сохранения тегов.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/ext3.jpg">
+                    <img src="portfolio/ext3.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>API сбор данных:</strong> Сбор тегов категории из общего запроса. Сортирует по количеству постов.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/ext4.jpg">
+                    <img src="portfolio/ext4.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интегрированный переводчик:</strong> Добавляет перевод на страницы для указанных сайтов.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/app8.jpg">
+                    <img src="portfolio/app8.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Добавленние функций:</strong> Рандомный пример имиджборда связанный с тематическими HTML через расширение и с Пайтон-приложением через скачиваемую датабазу.
+                </div>
+            </div>
+        </div>
+    </section>
+    <div id="navigation"><a href="index.html" class="back-link">← Вернуться на главную</a><a href="case2.html" class="back-link">Кейс 2: Веб-интерфейсы, Системы классификации и CMS →</a></div>
+</div>
+
+<div class="lightbox" id="lightbox">
+    <img src="" alt="Увеличенное изображение" id="lightbox-img">
+</div>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        // 1. Каскадное появление блоков проектов при загрузке
+        anime({
+            targets: '[data-project]',
+            opacity: 1,
+            translateY: [20, 0],
+            duration: 800,
+            delay: anime.stagger(200),
+            easing: 'easeOutQuad'
+        });
+
+        // 2. Логика работы Lightbox (Галереи)
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        galleryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const imgPath = item.getAttribute('data-src');
+                
+                const isLongImage = item.classList.contains('is-long');
+
+                // Включаю/выключаю режим скролла для модалки ДО ее открытия
+                if (isLongImage) {
+                    lightbox.classList.add('scrollable-mode');
+                    lightbox.scrollTop = 0; // Сбрасываю скролл в самый верх
+                } else {
+                    lightbox.classList.remove('scrollable-mode');
+                }
+
+                lightboxImg.src = imgPath;
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Блокирую скролл самого сайта
+
+                // Плавное увеличение через Anime.js
+                anime({
+                    targets: '#lightbox-img',
+                    scale: [0.7, 1],
+                    duration: 300,
+                    easing: 'easeOutBack'
+                });
+            });
+        });
+
+        // Закрытие
+        lightbox.addEventListener('click', () => {
+            anime({
+                targets: '#lightbox-img',
+                scale: 0.95,
+                duration: 200,
+                easing: 'easeInQuad',
+                complete: () => {
+                    lightbox.classList.remove('active');
+                    document.body.style.overflow = 'auto'; // Возвращаю скролл сайту
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

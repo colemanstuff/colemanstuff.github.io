@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="saturn.ico" type="image/ico">
+    <title>Техническое Портфолио</title>
+    <!-- Подключаю Anime.js версии 3 -->
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3/lib/anime.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-color: #c9d1d9;
+            --accent-color: #58a6ff;
+            --border-color: #30363d;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            opacity: 0; /* Начальное состояние для анимации */
+        }
+
+        h1 { color: #fff; margin-bottom: 10px; }
+        .subtitle { color: var(--accent-color); font-weight: bold; }
+
+        .about {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+            opacity: 0; /* Начальное состояние для анимации */
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.3s;
+            opacity: 0; /* Начальное состояние для анимации */
+        }
+
+        .card:hover {
+            border-color: var(--accent-color);
+        }
+
+        .card h3 { margin-top: 0; color: #fff; }
+        .card p { font-size: 14px; line-height: 1.5; }
+
+	  #profile-img {
+	    float: right;
+	    margin-left: 15px;
+	    margin-bottom: 10px;
+	    width: 200px;
+	  }
+	  @media (max-width: 600px) {
+	    #profile-img {
+	      float: none;
+	      display: block;
+	      margin: 0 auto 15px;
+	    }
+	  }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header id="header">
+        <h1>ИТ-Специалист / Разработчик инструментов</h1>
+        <div class="subtitle">Портфолио личных проектов и систем автоматизации</div>
+    </header>
+
+    <section class="about" id="about">
+        <center><h3>Обо мне</h3></center>
+        <img src="profile_1.webp" alt="Me in a studio" id="profile-img">
+<strong>Стремлюсь развиваться в сфере модерации, администрирования контента и операционной поддержки веб-ресурсов.</strong>
+<p>Обладаю комплексным пониманием того, как устроены современные веб-платформы, интерфейсы и базы данных. Сочетаю навыки работы с текстовым и графическим контентом с базовой технической экспертизой, что позволяет мне эффективно решать задачи на стыке администрирования и UI-дизайна.</p>
+<ul>
+<li><strong>Работа с графикой и UI:</strong> Уверенно владею <strong>Adobe Photoshop</strong> и <strong>Clip Studio Paint</strong> на среднем уровне. Самостоятельно разрабатываю дизайн-макеты, баннеры, обложки, а также занимаюсь кастомным оформлением сообществ и страниц.</li>
+<li><strong>Языковая квалификация:</strong> Владею английским языком на уровне <strong>B1 (Intermediate)</strong>. Свободно читаю техническую документацию, регламенты и гайды, четко воспринимаю рабочие задачи на слух и готов к ведению текстовой коммуникации.</li>
+<li><strong>Технический бэкграунд:</strong> Знание основ <strong>Python, JavaScript (Vanilla), PHP и MySQL</strong>. Понимаю логику работы серверной части и браузерных расширений. Это позволяет мне быстро осваивать любые внутренние панели управления (CMS), эффективно взаимодействовать с разработчиками и глубже понимать структуру модерируемого контента.</li>
+<li><strong>Личные качества:</strong> Высокая внимательность к деталям, грамотность, системный подход к категоризации данных и строгое следование должностным инструкциям.</li>
+</ul>
+        <p>Обладаю инженерным складом ума и сильной базой в сфере автоматизации рутинных процессов, сбора данных и веб-технологий. Умею проектировать интерфейсы, работать с API и администрировать веб-ресурсы. Быстро осваиваю внутренние CRM-системы и правила модерации.</p>
+        <p>Кейсы ниже демонстрируют мои навыки, подходящие для работы модератором/оператором сайта и чата. Много опыта работы с контентом, оптимизации модерации, работа с базами данных, наполнением сайтов и оформлением статей. Могу эффективно взаимодействовать с технической поддержкой сайта, понимать логику работы учетных записей, тегов, систем банов и логов. Имею навыки для оформления постов, каналов, групп и баннеров. Есть навык создания грамотных, структурированных текстов. Это позволяет профессионально общаться с пользователями в чатах поддержки, писать понятные инструкции, гайды, правила сообщества и официальные ответы.</p>
+        <p>Хоть у меня и нет прямого опыта работы модератором или оператором, я надеюсь, что это портфолио убедит вас в моих подходящих навыках для старта в этой сфере.</p>
+        <p><i>Примечание: </i>в кейсах очень коротко описаны и показаны скриншоты отдельных примеров работ. Много проектов и описаний функций опущено. Для полного ознакомления смотрите <a href="full.html" style="color: var(--accent-color); text-decoration: underline;">ПОЛНЫЙ ТЕКСТ</a>. Какие-то примеры скриншотов не самые показательные в этом направлении, поэтому лучше прочесть. Но это то, что я могу сейчас показать. Можете сразу посмотреть кейсы, и, если заинтересует что-то, прочесть полный текст. А если не заинтересует, то, скорее всего, и в полном тексте вам ничего не понравится.</p>
+        <p>Всё по типу Sony Vegas, Blender, FL Studio, Adobe Audition и т. п. программ, в которых я сам разобрался и делал что-то для себя, не пишу в это портфолио.</p>
+        <p>Телеграмм для связи: <a href="https://t.me/the_dark_night_knight" target="_blank" style="color: var(--accent-color); text-decoration: underline;">@the_dark_night_knight</a></p>
+    </section>
+
+    <main class="grid">
+        <a href="case1.html" class="card" data-card>
+            <h3>Кейс 1: Автоматизация и Парсинг</h3>
+            <p>Python-скрипты для обработки файлов, пакетная конвертация данных, парсинг медиа-платформ по API и кастомные расширения для браузеров.</p>
+        </a>
+
+        <a href="case2.html" class="card" data-card>
+            <h3>Кейс 2: Веб-интерфейсы и CMS</h3>
+            <p>Интерактивные веб-панели управления, классификация данных с Drag-and-Drop, локальные базы данных, PHP и администрирование сайтов на WordPress.</p>
+        </a>
+
+        <a href="case3.html" class="card" data-card>
+            <h3>Кейс 3: Макеты, Digital Media и Тексты</h3>
+            <p>Веб-дизайн и графика в Photoshop/CSP, рисование, генерация медиаконтента через AI и написание текстов.</p>
+        </a>
+    </main>
+</div>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        // 1. Анимация появления шапки
+        anime({
+            targets: '#header',
+            opacity: [0, 1],
+            translateY: [-20, 0],
+            duration: 1000,
+            easing: 'easeOutElastic(1, .8)'
+        });
+
+        // 2. Анимация появления блока Обо мне
+        anime({
+            targets: '#about',
+            opacity: [0, 1],
+            translateY: [20, 0],
+            duration: 800,
+            delay: 300,
+            easing: 'easeOutQuad'
+        });
+
+        const cards = document.querySelectorAll('[data-card]');
+
+        // 3. Каскадное появление карточек (Stagger эффект)
+        anime({
+            targets: cards,
+            opacity: [0, 1],
+            scale: [0.9, 1],
+            duration: 600,
+            delay: anime.stagger(150, {start: 500}), 
+            easing: 'easeOutBack'
+        });
+    });
+</script>
+</body>
+</html>

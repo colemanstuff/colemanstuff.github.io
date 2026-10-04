@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="saturn.ico" type="image/ico">
+    <title>Кейс 2: Веб-интерфейсы, Системы классификации и CMS</title>
+    <!-- Подключаю Anime.js -->
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3/lib/anime.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-color: #c9d1d9;
+            --accent-color: #58a6ff;
+            --border-color: #30363d;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: var(--accent-color);
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        #navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; 
+            width: 100%;
+        }
+        
+        header {
+            margin-bottom: 40px;
+        }
+
+        h1 { color: #fff; margin: 0 0 10px 0; }
+
+        .project-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            opacity: 0; /* Для анимации */
+        }
+
+        .project-section h2 { color: #fff; margin-top: 0; }
+        .tech-stack {
+            font-size: 13px;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .gallery-item {
+            background: #0d1117;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .img-placeholder {
+            font-size: 12px;
+            color: #8b949e;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* Базовый слой модального окна */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 17, 23, 0.95);
+            display: flex;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            box-sizing: border-box;
+            
+            /* По умолчанию центрирую обычные картинки */
+            align-items: center;
+            justify-content: center;
+            overflow-y: hidden; 
+            padding: 20px;
+        }
+
+        /* ЭТОТ КЛАСС БУДЕТ ВКЛЮЧАТЬСЯ ТОЛЬКО ДЛЯ ДЛИННЫХ КАРТИНОК */
+        .lightbox.scrollable-mode {
+            align-items: flex-start; /* Прижимаю к верху, чтобы скроллить вниз */
+            overflow-y: auto;        /* Включаю вертикальный скролл */
+            padding: 40px 0;
+        }
+
+        .lightbox.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Стили самой картинки внутри модалки */
+        .lightbox img {
+            border-radius: 6px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+            transform: scale(0.95);
+            transform-origin: center center;
+        }
+
+        /* Для обычных картинок: вписываю их в границы экрана */
+        .lightbox:not(.scrollable-mode) img {
+            max-width: 90%;
+            max-height: 85%;
+            object-fit: contain;
+        }
+
+        /* Для длинных картинок: делаю их крупными и приближенными */
+        .lightbox.scrollable-mode img {
+            width: 90%;
+            max-width: 1200px;
+            height: auto;
+            transform-origin: top center; /* Анимация увеличения идет сверху вниз */
+        }
+
+        /* Контейнер для длинного скриншота */
+        .gallery-item.long-container {
+            align-items: flex-start; /* Прижимаю картинку к верху */
+            overflow: hidden;
+        }
+
+        /* Сама картинка */
+        .gallery-item.long-container img {
+            width: 100%;
+            height: auto; /* Высота автоматическая, чтобы картинка не сжималась */
+            object-fit: cover;
+            object-position: top; /* Показываю только верх сайта */
+            transition: transform 10s ease-in-out; /* Плавный скролл вниз */
+        }
+
+        /* Эффект прокрутки при наведении */
+        .gallery-item.long-container:hover img {
+            /* Сдвигаю картинку вверх, чтобы увидеть ее конец. 
+               Значение подберается под высоту скриншота */
+            transform: translateY(-70%); 
+        }
+        /* Делаю контейнер относительным, чтобы позиционировать текст */
+        .gallery-item {
+            position: relative; 
+        }
+
+        /* Стили для плашки с текстом */
+        .gallery-item .item-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(22, 27, 34, 0.9); /* Темный фон в тон сайта */
+            border-top: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 8px 12px;
+            font-size: 12px;
+            line-height: 1.4;
+            box-sizing: border-box;
+            z-index: 2; /* Текст всегда выше картинки */
+        }
+        /* Сетка для карточек */
+        /* Базовые стили для сетки галереи (для компьютеров и ноутбуков) */
+        .gallery {
+            display: grid;
+            /* Жестко задаем 3 колонки одинаковой ширины */
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 20px;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        /* Адаптивность: если экран меньше 900px (планшеты), перестраиваем в 2 колонки */
+        @media (max-width: 900px) {
+            .gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Адаптивность: если экран меньше 600px (смартфоны), выстраиваю всё в 1 колонку */
+        @media (max-width: 600px) {
+            .gallery {
+                grid-template-columns: 1fr;
+                gap: 15px; /* Чуть уменьшаем расстояние на мобильных */
+            }
+        }
+
+        /* Общий контейнер: объединяет картинку и текст снизу */
+        .gallery-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: border-color 0.2s;
+        }
+
+        .gallery-card:hover {
+            border-color: var(--accent-color); /* Подсветка всей карточки при наведении */
+        }
+
+        /* Сбрасываю лишние рамки с плитки, так как рамка теперь общая */
+        .gallery-item {
+            border: none;
+            border-radius: 0;
+            width: 100%;
+        }
+
+        /* Стили текстового описания под скриншотом */
+        .gallery-desc {
+            padding: 15px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #8b949e;
+            border-top: 1px solid var(--border-color);
+            background: #1c2128; /* Чуть выделяю плашку с текстом */
+            flex-grow: 1; /* Растягиваю текстовые блоки по высоте, чтобы все карточки в ряду были одинаковыми */
+        }
+
+        .gallery-desc strong {
+            color: #fff;
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .gallery-desc p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="index.html" class="back-link">← Вернуться на главную</a>
+    
+    <header>
+        <h1>Кейс 2: Веб-интерфейсы, Системы классификации и CMS</h1>
+        <p>Проектирование интерактивных Front-End инструментов, админок и кастомных модулей управления контентом.</p>
+    </header>
+
+    <section class="project-section" data-project>
+        <h2>Кастомные веб-приложения, UI-инструменты и браузерная игра</h2>
+        <div class="tech-stack">Стек: JavaScript, HTML5, CSS3</div>
+        <p>Разработал приложения для ускорения работы с текстом и медиа данными.</p>
+        <p>* Разработал скрипт для парсинга и динамического форматирования внешних заметок (из Microsoft OneNote) в структурированный HTML-код.</p>
+        <p>Опыт верстки сайтов.</p>
+        <p>Плюс этот сайт сделан мной (плюс к портфолио). Для интерактивной анимации использую Anime.js.</p>
+
+        <div class="gallery">
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/frontend1.jpg">
+                    <img src="portfolio/frontend1.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Веб-текстовый редактор:</strong> Для написания литературных длинных тектсов с автосохранением в браузере.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/frontend2.jpg">
+                    <img src="portfolio/frontend2.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Веб-текстовый редактор:</strong> Темная тема. Горячие клавиши для добавления заголовков, ссылок, списков, картинок и др.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/frontend3.jpg">
+                    <img src="portfolio/frontend3.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Система ведения медиа-каталогов:</strong> Панель для визуального учета литературных и медиа-работ. Блок детального описания динамически появляется сбоку от тайтла при наведении. Всё интерактивно редактируется, заметки выведены в правой панели.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/frontend4.jpg">
+                    <img src="portfolio/frontend4.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерактивный просмотр списка:</strong> Страница для просмотра фото по списку с сохранением выбранной картинки и класса через парсинг.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/frontend5.jpg">
+                    <img src="portfolio/frontend5.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерактивная классификация 1:</strong> Страница для визуальной классификации. Всё интерактивно и легко перемещается и изменяется.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/frontend7.jpg">
+                    <img src="portfolio/frontend7.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интерфейс интерактивной классификации 2:</strong> Админ-панель с перемещаемыми мышкой блоками (Drag-and-Drop) для моментальной сортировки контента. Оптимизирована работа с памятью через <code>localStorage</code> для кэширования сессий до момента скачивания финального документа.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/game1.jpg">
+                    <img src="portfolio/game1.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Тактическая PvP веб-игра:</strong> Кастомный проект, вдохновленный Шоги и Го. Реализована механика уникальных ходов для каждой фигуры, генерация карт с преградами, логика подсчета контроля доски (до 50 фигур на поле) и ограничение времени хода в 10 секунд.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/game2.jpg">
+                    <img src="portfolio/game2.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Тактическая PvP веб-игра 2:</strong> Победит тот кто контролирует большую часть доски с учетом количества используемых фигур (можно добавить на определенные края поля до 50 фигур в определенной последовательности) и сбитых фигур врага.
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="project-section" data-project>
+        <h2>Full-Stack утилиты, Базы данных и CMS</h2>
+        <div class="tech-stack">Стек: PHP, MySQL, JavaScript, HTML5, CSS3</div>
+        <p>Знаю базовый PHP + MySQL (XAMPP/Apache) для локального развертывания веб-приложений.</p>
+        <p>* Имею опыт развертывания, администрирования, миграции (переноса на другие хостинги/домены) и наполнения контентом сайтов на WordPress.</p>
+        <p>Опыт переноса любого сайта на другой хостинг/домен.</p>
+        
+        <div class="gallery">
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/php1.jpg">
+                    <img src="portfolio/php1.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Система тегирования карточек:</strong> Разработка локального бэкенда на PHP + MySQL (XAMPP/Apache). Создана динамическая база карточек с системой привязки множественных тегов для сквозного поиска и быстрой фильтрации.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/php2.jpg">
+                    <img src="portfolio/php2.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Игровой Full-Stack модуль:</strong> Минималистичное приложение для одиночной игры со встроенным легковесным JS-ботом.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/php3.jpg">
+                    <img src="portfolio/php3.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Игровой Full-Stack модуль:</strong> А также социальный модуль для игры с другими пользователями после регистрации в режиме онлайн на чистом PHP.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/php4.png">
+                    <img src="portfolio/php4.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Простая социальная сеть:</strong> Минималистичная социальная сеть. Могу делать соц-сети базового уровня со всеми функциями на чистом PHP или используя движок.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item long-container is-long" data-src="portfolio/frontend6.webp">
+                    <img src="portfolio/frontend6.webp" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Администрирование CMS:</strong> Развертывание контентного сайта со статьями на WordPress. Навыки конфигурации движка, работы с плагинами, настройки структуры рубрик, управления публикациями и переноса баз данных на хостинг.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/webstore1.webp">
+                    <img src="portfolio/webstore1.webp" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интернет-магазин на чистом PHP:</strong> Управление карточками товара через мой шаблон. Зеленый код бежит постоянно сверху вниз. Использована интерактивная анимация Anime.js.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/webstore2.webp">
+                    <img src="portfolio/webstore2.webp" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интернет магазин на чистом PHP:</strong> Страница товара. Заявка приходит в простую мной написанную админ панель.
+                </div>
+            </div>
+            <div class="gallery-card">
+                <div class="gallery-item" data-src="portfolio/webstore3.webp">
+                    <img src="portfolio/webstore3.webp" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <div class="img-placeholder" style="display:none;">Пусто</div>
+                </div>
+                <div class="gallery-desc">
+                    <strong>Интернет магазин на чистом PHP:</strong> Страница с информацией для заказа.
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <div id="navigation"><a href="index.html" class="back-link">← Вернуться на главную</a><a href="case3.html" class="back-link">Кейс 3: Макеты, Digital Media и Тексты →</a></div>
+</div>
+
+<div class="lightbox" id="lightbox">
+    <img src="" alt="Увеличенное изображение" id="lightbox-img">
+</div>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        // 1. Каскадное появление блоков проектов при загрузке
+        anime({
+            targets: '[data-project]',
+            opacity: 1,
+            translateY: [20, 0],
+            duration: 800,
+            delay: anime.stagger(200),
+            easing: 'easeOutQuad'
+        });
+
+        // 2. Логика работы Lightbox (Галереи)
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        galleryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const imgPath = item.getAttribute('data-src');
+                
+                const isLongImage = item.classList.contains('is-long');
+
+                // Включаю/выключаю режим скролла для модалки ДО ее открытия
+                if (isLongImage) {
+                    lightbox.classList.add('scrollable-mode');
+                    lightbox.scrollTop = 0; // Сбрасываю скролл в самый верх
+                } else {
+                    lightbox.classList.remove('scrollable-mode');
+                }
+
+                lightboxImg.src = imgPath;
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Блокирую скролл самого сайта
+
+                // Плавное увеличение через Anime.js
+                anime({
+                    targets: '#lightbox-img',
+                    scale: [0.7, 1],
+                    duration: 300,
+                    easing: 'easeOutBack'
+                });
+            });
+        });
+
+        // Закрытие
+        lightbox.addEventListener('click', () => {
+            anime({
+                targets: '#lightbox-img',
+                scale: 0.95,
+                duration: 200,
+                easing: 'easeInQuad',
+                complete: () => {
+                    lightbox.classList.remove('active');
+                    document.body.style.overflow = 'auto'; // Возвращаю скролл сайту
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
